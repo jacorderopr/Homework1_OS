@@ -8,11 +8,12 @@ project(mouse_plotter)
 
 # Find ncurses library
 find_package(Curses REQUIRED)
-include_directories(${CURSES_INCLUDE_DIR})
+include_directories(include ${CURSES_INCLUDE_DIR})
 
 # Add the executable
 add_executable(${CMAKE_PROJECT_NAME} 
-	src/main.c)
+	src/main.c
+	src/mouse_plotter_functions.c)
 
 # Link ncurses to your executable
 target_link_libraries(${CMAKE_PROJECT_NAME} ${CURSES_LIBRARIES})

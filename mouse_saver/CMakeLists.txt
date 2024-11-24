@@ -6,6 +6,9 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -s")
 # Set the project name
 project(mouse_saver)
 
+include_directories(include)
+
 # Add the executable
 add_executable(${CMAKE_PROJECT_NAME} 
-	src/main.c)
+	src/main.c
+	src/mouse_saver_functions.c)
