@@ -6,9 +6,14 @@
 #include <string.h>
 #include <stdlib.h>
 
+FILE *fptr;
+int fd;
+
 void SigIntHandler(int num) {
   char *msg = "Received SIGINT signal! Closing the mouse device file!\n";
   write(STDOUT_FILENO, msg, strlen(msg));
+  close(fd);
+  fclose(fptr);
   exit(1);
 }
 
@@ -20,11 +25,14 @@ int main() {
 
 
   const char *device = "/dev/input/mice";  // Generic mouse device file
-  int fd = open(device, O_RDONLY);
+   fd = open(device, O_RDONLY);
   if (fd == -1) {
     perror("Error opening device");
     return 1;
   }
+
+  // open binary file used to WRITE
+   fptr = fopen("mouse_data.dat", "w");
 
   signed char data[3];
 
@@ -57,12 +65,11 @@ int main() {
 
       translated_coords_x = translated_coords_x + (dx / 10.24);
       translated_coords_y = translated_coords_y + (dy / 32.5); // 32.5
-
+      fprintf(fptr, "%d\n", (int)translated_coords_x);
+      fprintf(fptr, "%d\n", (int)translated_coords_y);
       printf("Left: %d, Right: %d, Middle: %d, dx: %d, dy: %d translated_coords_x: %f, translated_coords_y: %f\n\n", left, right,
              middle, dx, dy, translated_coords_x, translated_coords_y);
     }
-
-
 
   }
 
