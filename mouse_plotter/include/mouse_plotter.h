@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
+#include <time.h>
 
 /**
  * @brief Reads the mouse data from the file.
@@ -23,5 +25,21 @@ int ReadMouseData(const char *file_path, int **numbers, int *num_integers);
  * @param num_integers Number of integers in the array.
  */
 void PlotMouseData(int *numbers, int num_integers);
+
+/**
+ * @brief Handles the timer signal to plot coordinates in the terminal.
+ *
+ * This function is invoked whenever the timer signal is generated. It processes
+ * a global array of integers containing pairs of coordinates, scales the coordinates
+ * to fit the terminal window, and plots them as points. If all coordinates have been 
+ * plotted, the function stops the timer, clears the terminal, and terminates the program.
+ *
+ * @param signum The signal number 
+ * @param si Pointer to a siginfo_t structure providing additional information about the signal 
+ * @param uc Pointer to the user context passed to the signal handler 
+ */
+
+void TimerHandler(int signum, siginfo_t *si, void *uc);
+
 
 #endif // MOUSE_PLOTTER_H
