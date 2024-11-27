@@ -56,17 +56,17 @@ int ReadMouseData(const char *file_path, int **numbers, int *num_integers)
   return 0;
 }
 
-// Signal handler for the timer
-void TimerHandler(int signum, siginfo_t *si, void *uc) //
+
+void TimerHandler(int signum, siginfo_t *si, void *uc) 
 {
-    // Prevent unused parameter warnings
+
     (void)signum;
     (void)si;
     (void)uc;
 
     if (current_index >= global_num_integers)
     {
-        // Stop the timer
+
         struct itimerspec stop = {0};
         timer_settime(plot_timer, 0, &stop, NULL);
         clear();
@@ -75,16 +75,15 @@ void TimerHandler(int signum, siginfo_t *si, void *uc) //
         exit(0);
     }
 
-    // Retrieve the next pair of coordinates
+
     int x = global_numbers[current_index];
     int y = global_numbers[current_index + 1];
     current_index += 2;
 
-    // Scale the coordinates to fit the terminal window
+    
     int term_x = (int)(x * scale_x);
     int term_y = (int)(y * scale_y);
 
-    // Clamp the coordinates to the terminal boundaries
     if (term_x < 0)
         term_x = 0;
     if (term_x >= max_col)
@@ -94,12 +93,12 @@ void TimerHandler(int signum, siginfo_t *si, void *uc) //
     if (term_y >= max_row)
         term_y = max_row - 1;
 
-    // Plot the point
+
     mvprintw(term_y, term_x, "*");
     refresh();
 
-    // Clear the screen periodically to prevent clutter
-    if (current_index % 40 == 0) // Every 20 points (since each point consumes 2 integers)
+
+    if (current_index % 40 == 0) 
     {
         clear();
     }
@@ -107,21 +106,21 @@ void TimerHandler(int signum, siginfo_t *si, void *uc) //
 
 void PlotMouseData(int *numbers, int num_integers)
 {
-    // Initialize global variables
+ 
     global_numbers = numbers;
     global_num_integers = num_integers;
 
-    // Initialize ncurses
+
     initscr();
     noecho();
     curs_set(FALSE);
     getmaxyx(stdscr, max_row, max_col);
 
-    // Calculate scaling factors based on terminal size
+  
     scale_x = (float)max_col / 100.0;
     scale_y = (float)max_row / 25.0;
 
-    // Setup the signal handler for the timer
+   
     struct sigaction sa;
     sa.sa_flags = SA_SIGINFO;
     sa.sa_sigaction = TimerHandler;
@@ -133,7 +132,7 @@ void PlotMouseData(int *numbers, int num_integers)
         exit(1);
     }
 
-    // Configure the timer to send SIGRTMIN
+    
     struct sigevent sev;
     sev.sigev_notify = SIGEV_SIGNAL;
     sev.sigev_signo = SIGRTMIN;
@@ -159,9 +158,9 @@ void PlotMouseData(int *numbers, int num_integers)
         exit(1);
     }
 
-    // Wait indefinitely; the signal handler will exit the program when done
+  
     while (1)
     {
-        pause(); // Suspend the process until a signal is caught
+        pause(); 
     }
 }
